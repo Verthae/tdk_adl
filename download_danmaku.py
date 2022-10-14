@@ -108,6 +108,7 @@ if __name__ == "__main__":
     lyst = get_names(asset_list)
     asset_list_f = open(asset_list_fp, "ab", buffering=0)
 
+    # Modify ThreadPool() for what works best for you - my connection is slow
     results = ThreadPool(1).imap_unordered(download_them, lyst)
     for i, (dir, name, ahash) in enumerate(results):
         asset_list_f.write(f"{dir}\t{name}\t{ahash}\n".encode("utf8"))
