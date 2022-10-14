@@ -69,9 +69,10 @@ if __name__ == "__main__":
     lyst = get_names(asset_list)
     asset_list_f = open(asset_list_fp, "ab", buffering=0)
 
+    # Modify ThreadPool(#) according to your system and download capabilities
     results = ThreadPool(1).imap_unordered(download_them, lyst)
     for i, (adir, name, ahash) in enumerate(results):
         asset_list_f.write(f"{adir}\t{name}\t{ahash}\n".encode("utf8"))
-        time.sleep(1)
+        time.sleep(1) # Optional?  
     print("ALL DONE.")
     asset_list_f.close()
