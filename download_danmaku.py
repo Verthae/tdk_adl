@@ -41,8 +41,8 @@ def get_names(filtering):
         # 1 is Android xab files
         # 2 is iOS xab files
         # whichever files you don't want - uncomment below and put in the array
-        if category in ["1", "2", "4"]:
-            continue
+        # if category in ["1", "2", "4"]:
+        #    continue
         for names in info:
             # this filters out the .dat files from common - just uncomment the if to exclude them
             # there's some rijnael and gzip stuff necessary to extract them according to esterTion's php script
