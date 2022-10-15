@@ -15,7 +15,8 @@ os.makedirs(RAW, exist_ok=True)
 class AssetDL:
     category: int
     path: str
-    hash: str
+    hashpath: str
+    filehash: str
     option: int
     directory: str
 
@@ -29,7 +30,7 @@ class AssetDL:
 
     @property
     def log_data(self):
-        return self.directory, self.path, self.hash
+        return self.directory, self.path, self.filehash
 
 def get_manf(url):
     req = requests.get(url).content
@@ -52,8 +53,8 @@ def get_names(filtering):
         for names in info:
             if assetdir not in filtering or names['AssetPath'] not in filtering[assetdir]\
                     or filtering[assetdir][names['AssetPath']] != names['FileHash']:
-                name_list.append(AssetDL(category, names['AssetPath'], names['HashedPath'], names['DownloadOption'],
-                                         assetdir))
+                name_list.append(AssetDL(category, names['AssetPath'], names['HashedPath'], names['FileHash'],
+                                         names['DownloadOption'], assetdir))
     return name_list
 
 
