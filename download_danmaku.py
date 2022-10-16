@@ -23,13 +23,13 @@ def download_them(l):
     # 1 and 2 are xab files - this runs the decryptor on them
     if l[3] in ["1", "2"]:
         Encryptors[Keys.DOWNLOAD_ASSETBUNDLE_KEY_1].modify(req_byte, 0, len(req_byte), 0, l[2] & 0xfff)
-    elif l[0].endswith(".dat"):
+    #elif l[0].endswith(".dat"):
         # print(len(req_byte)%16)
         # length = 16 - len(req_byte) % 16
-        Encryptors[Keys.DOWNLOAD_DAT_KEY].modify(req_byte, 0, len(req_byte), 0, l[2] & 0xfff)
+    #    Encryptors[Keys.DOWNLOAD_DAT_KEY].modify(req_byte, 0, len(req_byte), 0, l[2] & 0xfff)
         # req_byte += bytes([length]) * length
         # print(len(req_byte)%16)
-        req_byte = Encryptors[Keys.EMBEDED_AES_KEY].transform(req_byte, 0, len(req_byte))
+    #    req_byte = Encryptors[Keys.EMBEDED_AES_KEY].transform(req_byte, 0, len(req_byte))
         # req_byte = req_byte[:-req_byte[-1]]
     open(os.path.join(ROOT, l[0]), "wb").write(req_byte)
     print("Downloaded:", l[0])
