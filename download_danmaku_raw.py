@@ -26,7 +26,7 @@ class AssetDL:
 
     @property
     def dl_path(self):
-        return base_url + self.directory + self.path
+        return base_url + self.directory + self.hashpath
 
     @property
     def log_data(self):
