@@ -52,7 +52,7 @@ class downloader:
             return NotImplemented
         # if not self.hash == other.hash and self.size == other.size:
         #     print(f"{self.hash} == {other.hash} : {str(self.hash == other.hash):>5s} and {self.size:>10} == {other.size:>10} : {self.size == other.size}")
-        return self.hash == other.hash and self.size == other.size and self.path == other.path
+        return self.hash == other.hash and self.size == other.size and self.hashpath == other.hashpath
 
 
 def merge(dict1, dict2, json):
