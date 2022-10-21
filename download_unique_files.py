@@ -4,7 +4,7 @@ import json
 import time
 
 import requests
-from lib import RAW
+from lib import RAW, LIST
 from dataclasses import dataclass, is_dataclass, asdict
 
 base_url = "https://assets-danmakujp.cdn-dena.com"
@@ -16,7 +16,7 @@ os.makedirs(os.path.dirname(save_directory), exist_ok=True)
 
 manifest_list = sorted(glob.glob("[0-90-90-90-9]*.json"), reverse=True)
 use_hash = True
-compiled_list = json.loads(open("list.json", "r").read())
+compiled_list = json.loads(open(os.path.join(LIST, "list.json"), "r").read())
 session_size = 0
 session_files = 0
 
