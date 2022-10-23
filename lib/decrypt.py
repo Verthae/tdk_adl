@@ -134,14 +134,22 @@ class Keys(IntEnum):
     DOWNLOAD_DB_KEY = 2003
 
 
-Encryptors = {
-    1001: RijndaelEncryptor('Pg97xygbey7aw', '857fesfd', True),
-    1002: LightWeightEncryptor(1749853741, 11, 512),
-    1003: LightWeightEncryptor(0xCE2B9A93, 13, 512),
-    1004: LightWeightEncryptor(874156713, 17, 512),
-    1501: RijndaelEncryptor('CgU6T5tehiGoZ', '37F741ED', True),
-    2001: LightWeightEncryptor(0x51C1D53, 17, 512),
-    2002: LightWeightEncryptor(0xF5F1B55, 13, 512),
-    2003: LightWeightEncryptor(0x28087953, 11, 512),
-}
+class Encryptors:
+    def __new__(cls, key: int):
+        if key == Keys.EMBEDED_AES_KEY:
+            return RijndaelEncryptor('Pg97xygbey7aw', '857fesfd', True)
+        elif key == Keys.EMBEDED_ASSETBUNDLE_KEY:
+            return LightWeightEncryptor(1749853741, 11, 512)
+        elif key == Keys.EMBEDED_DAT_KEY:
+            return LightWeightEncryptor(0xCE2B9A93, 13, 512)
+        elif key == Keys.EMBEDED_FILELIST_KEY:
+            return LightWeightEncryptor(874156713, 17, 512)
+        elif key == Keys.DEFAULT_KEY:
+            return RijndaelEncryptor('CgU6T5tehiGoZ', '37F741ED', True)
+        elif key == Keys.DOWNLOAD_ASSETBUNDLE_KEY_1:
+            return LightWeightEncryptor(0x51C1D53, 17, 512)
+        elif key == Keys.DOWNLOAD_DAT_KEY:
+            return LightWeightEncryptor(0xF5F1B55, 13, 512)
+        elif key == Keys.DOWNLOAD_DB_KEY:
+            return LightWeightEncryptor(0x28087953, 11, 512)
 

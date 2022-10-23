@@ -1,32 +1,9 @@
 import requests
 import json
 import os
-from lib import ASSET_UPLOAD_V2, MANIFESTS
-from dataclasses import dataclass
-
-base_url = "https://assets-danmakujp.cdn-dena.com"
+from lib import ASSET_UPLOAD_V2, MANIFESTS, ManifestDL
 
 os.makedirs(MANIFESTS, exist_ok=True)
-
-@dataclass
-class ManifestDL:
-    root_path: str
-    hash_path: str
-    platform: str
-    data_version: int
-    enable: int
-    db: str
-    open_at: int
-    salt: int
-
-    @property
-    def save_path(self):
-        return os.path.join(self.root_path, 'data', self.hash_path)
-
-    @property
-    def dl_path(self):
-        return '/'.join([base_url, 'assets', self.root_path, 'data', self.hash_path])
-
 
 def get_manifests():
     manifest_dict = {} # for identifying duplicate manifests
@@ -57,15 +34,15 @@ def get_manifests():
 def download(manifest):
     os.makedirs(os.path.dirname(os.path.join(MANIFESTS, manifest.save_path)), exist_ok=True)
     req_byte = bytearray(requests.get(manifest.dl_path).content)
-    with open(os.path.join(MANIFESTS, manifest.save_path), "wb") as f:
+    with open(os.path.join(MANIFESTS, manifest.save_path), 'wb') as f:
         f.write(req_byte)
-    print("Downloaded:", manifest.save_path)
+    print('Downloaded:', manifest.save_path)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     manifests = get_manifests()
     with open('manifests.txt', 'w') as f:
         for m in manifests:
             download(m)
             f.write(f'{m}\n')
-    print("ALL DONE.")
+    print('ALL DONE.')
