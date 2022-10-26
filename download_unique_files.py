@@ -77,13 +77,13 @@ def dict_to_download(dictm):
 def download(asset_data):
     os.makedirs(os.path.dirname(asset_data.save_path), exist_ok=True)
     req_byte = requests.get(asset_data.dl_path)
-    if req_byte.status_code != "404":
+    if req_byte.status_code == 200:
         with open(asset_data.save_path, "wb") as f:
             f.write(bytearray(req_byte.content))
         print("Downloaded:", asset_data.save_path)
     else:
         print(asset_data.dl_path, " was not found.")
-    return req_byte.status_code != "404"
+    return req_byte.status_code == 200
 
 
 def merge(dict1, dict2, json_id):
