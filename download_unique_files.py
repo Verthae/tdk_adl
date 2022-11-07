@@ -4,21 +4,28 @@ import json
 import time
 
 import requests
-from lib import RAW, LIST
+from lib import RAW, LIST, DECRYPT, Encryptors, Keys
 from dataclasses import dataclass, is_dataclass, asdict
 
 base_url = "https://assets-danmakujp.cdn-dena.com"
 
 os.makedirs(RAW, exist_ok=True)
+os.makedirs(DECRYPT, exist_ok=True)
 
-save_directory = os.path.join(RAW, "unique_raw")
-os.makedirs(os.path.dirname(save_directory), exist_ok=True)
+#Ask for onput on how to save the files
+ask = input("Do you want to save via hash path? (Leave blank for no)")
+use_hash = True if ask == 'y' else False
+ask = input("Do you want to decrypt the game assets? (Leave blank for no)")
+decode = True if ask == 'y' else False
+ask = input("Do you want to filter the download sections? (Leave blank for no, select 1234)")
+dlfilter = ask
 
-manifest_list = sorted(glob.glob("[0-90-90-90-9]*.json"), reverse=True)
-use_hash = True
-compiled_list = json.loads(open(os.path.join(LIST, "list.json"), "r").read())
+compiled_list = json.loads(open(os.path.join(LIST, "list_v3.json"), "r").read())
 session_size = 0
 session_files = 0
+
+save_directory = DECRYPT if decode else os.path.join(RAW, "unique_raw")
+os.makedirs(os.path.dirname(save_directory), exist_ok=True)
 
 data = {
     "1": {},
@@ -26,11 +33,12 @@ data = {
     "3": {},
     "4": {},
 }
+
 comparing = {
-    "1": {},
-    "2": {},
-    "3": {},
-    "4": {},
+    "1": {},  # Android
+    "2": {},  # iOS
+    "3": {},  # Audio / Scenario Data
+    "4": {},  # Master Data
     "filesize": 0,
     "filenum": 0
 }
@@ -58,7 +66,11 @@ class downloader:
 
     @property
     def save_path(self):
-        return save_directory + ("\\data" + self.hashpath) if use_hash else (self.directory + self.path)
+        # print(self.path.rsplit("/", 1))
+        dir, file = self.path.rsplit("/", 1)
+        modified_dir = os.path.join(dir, self.hash, file)
+        print(save_directory)
+        return save_directory + (("\\data" + self.hashpath) if use_hash else (self.directory + modified_dir))
 
     def __eq__(self, other):
         if not isinstance(other, downloader):
@@ -75,12 +87,17 @@ def dict_to_download(dictm):
 
 
 def download(asset_data):
+    dl_directory = asset_data.save_path
     os.makedirs(os.path.dirname(asset_data.save_path), exist_ok=True)
     req_byte = requests.get(asset_data.dl_path)
     if req_byte.status_code == 200:
-        with open(asset_data.save_path, "wb") as f:
-            f.write(bytearray(req_byte.content))
-        print("Downloaded:", asset_data.save_path)
+        with open(dl_directory, "wb") as f:
+            filedata = bytearray(req_byte.content)
+            if decode and asset_data.hashpath[1] in ["1", "2"]:
+                Encryptors[Keys.DOWNLOAD_ASSETBUNDLE_KEY_1].modify(
+                    filedata, 0, len(filedata), 0, asset_data.option & 0xfff)
+            f.write(filedata)
+        print("Downloaded:", dl_directory)
     else:
         print(asset_data.dl_path, " was not found.")
     return req_byte.status_code == 200
@@ -115,26 +132,6 @@ for asset_path in comparing:
     else:
         comparing[asset_path] = compiled_list[asset_path]
 
-
-
-# Read any additional manifests - compare and include into downloader dictionary
-for filename in manifest_list:
-    manifest_json = open(filename, 'r')
-    reader = json.load(manifest_json)
-    manifest = {}
-    for index in reader["manifest"]:
-        manifest[index] = {
-            x["AssetPath"]:
-                downloader(
-                    x["AssetPath"], x["FileHash"], x["FileSize"], x["HashedPath"],
-                    x["DownloadOption"], reader["assetDir"]
-                )
-            for x in reader["manifest"][index]
-        }
-    for index in manifest:
-        if index in data:
-            data[index] = merge(manifest[index], data[index], index)
-
 # Read download history
 previously_downloaded = []
 downloaded_list_fp = os.path.join(RAW, "unique_assets.txt")
@@ -144,9 +141,9 @@ if os.path.exists(downloaded_list_fp):
 cur_progress = len(previously_downloaded)
 
 # Append new file hashes to history, download new files
-with open(os.path.join(RAW, "unique_assets.txt"), 'a') as writer:
+with open(os.path.join(DECRYPT if decode else RAW, "unique_assets.txt"), 'a') as writer:
     for index in comparing:
-        if isinstance(comparing[index], dict):
+        if isinstance(comparing[index], dict) and index not in dlfilter:
             for asset in comparing[index]:
                 for file_download in comparing[index][asset]:
                     if file_download.hashpath not in previously_downloaded:
