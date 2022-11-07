@@ -66,10 +66,8 @@ class downloader:
 
     @property
     def save_path(self):
-        # print(self.path.rsplit("/", 1))
         dir, file = self.path.rsplit("/", 1)
         modified_dir = os.path.join(dir, self.hash, file)
-        print(save_directory)
         return save_directory + (("\\data" + self.hashpath) if use_hash else (self.directory + modified_dir))
 
     def __eq__(self, other):
