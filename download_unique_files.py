@@ -35,8 +35,8 @@ data = {
 }
 
 comparing = {
-    "1": {},  # Android
-    "2": {},  # iOS
+    "1": {},  # iOS
+    "2": {},  # Android
     "3": {},  # Audio / Scenario Data
     "4": {},  # Master Data
     "filesize": 0,
