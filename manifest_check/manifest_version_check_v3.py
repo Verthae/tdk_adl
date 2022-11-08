@@ -74,7 +74,7 @@ def merge(dict1, dict2, json):
     return {**dict1, **dict2}
 
 
-manifest_list = sorted(glob.glob('**/arg_*.json', recursive=True), reverse=True)
+manifest_list = sorted(glob.glob('../**/arg_*.json', recursive=True), reverse=True)
 for filename in manifest_list:
     with open(filename) as manifest_json:
         reader = json.load(manifest_json)
@@ -93,5 +93,5 @@ for filename in manifest_list:
                 data[key] = merge(manifest[str(key)], data[key], key)
 
 print(comparing["filenum"], ":", comparing["filesize"])
-with open("list_v2.json", "w") as file:
+with open("list_final.json", "w") as file:
     file.write(json.dumps(comparing, cls=EnhancedJSONEncoder))
