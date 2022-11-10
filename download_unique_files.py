@@ -92,7 +92,7 @@ def download(asset_data):
         with open(dl_directory, "wb") as f:
             filedata = bytearray(req_byte.content)
             if decode and asset_data.hashpath[1] in ["1", "2"]:
-                Encryptors[Keys.DOWNLOAD_ASSETBUNDLE_KEY_1].modify(
+                Encryptors(Keys.DOWNLOAD_ASSETBUNDLE_KEY_1).modify(
                     filedata, 0, len(filedata), 0, asset_data.option & 0xfff)
             f.write(filedata)
         print("Downloaded:", dl_directory)
